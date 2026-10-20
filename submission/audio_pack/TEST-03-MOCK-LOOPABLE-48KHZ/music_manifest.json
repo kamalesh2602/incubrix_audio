@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.0.0",
-  "job_id": "10cd871f-0074-4ea8-b6aa-58c291c364e7",
+  "job_id": "a37441da-069c-459f-8e1c-13ea6cca5e7b",
   "request": {
     "prompt": "Rhythmic lo-fi chill beat with smooth bassline and gentle electric piano chords",
     "duration_s": 7.5,
@@ -51,9 +51,9 @@
   },
   "sample_rate": 48000,
   "timings": {
-    "created_at": "2026-10-20T08:12:02.515053+00:00",
-    "completed_at": "2026-10-20T08:12:03.833443+00:00",
-    "generation_time_s": 1.3184,
+    "created_at": "2026-10-20T08:38:13.595229+00:00",
+    "completed_at": "2026-10-20T08:38:14.878887+00:00",
+    "generation_time_s": 1.2837,
     "section_timings": []
   },
   "warnings": [

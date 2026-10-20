@@ -1,6 +1,6 @@
 {
-  "manifest_version": "1.0.0",
-  "job_id": "3f8a0a80-9e13-4637-ba6c-2513aaa7b24a",
+  "manifest_version": "2.0.0",
+  "job_id": "job-test-04-soundverse-mocked-demucs-6stem",
   "request": {
     "prompt": "Cinematic orchestral rock with driving drums, electric guitar, and grand piano",
     "duration_s": 5.0,
@@ -18,12 +18,19 @@
       ]
     }
   },
-  "seed": 1326259426,
   "provider": {
-    "name": "MockMusicProvider",
-    "version": "1.0.0",
-    "type": "mock",
-    "description": "Deterministic multi-stem algorithmic oscillator mock provider"
+    "name": "SoundverseProvider",
+    "version": "2.0.0",
+    "type": "soundverse_enterprise",
+    "model_version": "v7",
+    "stem_variant": "six-stem",
+    "description": "Soundverse Enterprise API: Instrumental Generation + Demucs Stem Separation"
+  },
+  "prompt_details": {
+    "submitted_prompt": "Cinematic orchestral rock with driving drums, electric guitar, and grand piano",
+    "composed_prompt": "Cinematic orchestral rock with driving drums, electric guitar, and grand piano, tempo 120 BPM, key of D minor, instrumental background music only, strictly no vocals, no singing, no spoken words",
+    "instrumental_only": true,
+    "vocals_explicitly_excluded": true
   },
   "settings": {
     "sample_rate": 48000,
@@ -33,17 +40,21 @@
     "target_lufs": -14.0
   },
   "stem_filenames": {
+    "drums": "stem_drums.wav",
     "bass": "stem_bass.wav",
-    "chords": "stem_chords.wav",
-    "melody": "stem_melody.wav"
+    "guitar": "stem_guitar.wav",
+    "piano": "stem_piano.wav",
+    "other": "stem_other.wav"
   },
   "mix_filename": "mix.wav",
-  "stem_gains": {
-    "bass": 0.35,
-    "chords": 0.3,
-    "melody": 0.35
+  "stem_reconstruction_validation": {
+    "is_exact_reconstruction": false,
+    "mae": 14197.0,
+    "rmse": 17311.91,
+    "max_error": 43233,
+    "signal_to_error_ratio_db": -7.78,
+    "notes": "Separation performed via neural model. Residual reconstruction error is present due to phase cancellation and nonlinear spectral masking in stem separation."
   },
-  "reconstruction_formula": "mix[t] = clamp(round(gain_bass * stem_bass[t] + gain_chords * stem_chords[t] + gain_melody * stem_melody[t]), -32768, 32767)",
   "duration": {
     "requested_s": 5.0,
     "actual_s": 5.0,
@@ -51,20 +62,29 @@
   },
   "sample_rate": 48000,
   "timings": {
-    "created_at": "2026-10-20T08:12:04.182981+00:00",
-    "completed_at": "2026-10-20T08:12:05.060521+00:00",
-    "generation_time_s": 0.8775,
+    "created_at": "2026-10-20T08:38:15.656432+00:00",
+    "completed_at": "2026-10-20T08:38:16.924471+00:00",
+    "generation_time_s": 1.2681,
     "section_timings": []
   },
+  "costs": {
+    "currency": "USD",
+    "music_generation_cost": 0.07,
+    "stem_separation_cost": 0.1,
+    "total_estimated_cost": 0.17,
+    "license_tier": "Royalty-Free (Tier 1)"
+  },
   "warnings": [
-    "Generated using local synthetic mock provider for testing and development.",
-    "In-memory job storage: job metadata and audio stems will not persist across server restarts.",
-    "Audio is algorithmically generated using sinusoidal/harmonic synthesis; not produced by deep generative AI models."
+    "Real AI generation and stem separation performed via Soundverse Enterprise API.",
+    "Separated stems exhibit nonlinear neural residual reconstruction error (documented honestly above).",
+    "Commercial clearance is NOT verified. Verify applicable terms and license tier before commercial deployment."
   ],
   "rights_and_licensing": {
-    "status": "unverified_mock_synthesis",
+    "provider": "soundverse",
+    "license_tier": "Royalty-Free (Tier 1)",
     "commercial_clearance": false,
-    "license_type": "development_and_testing_only",
-    "notes": "Generated with local algorithmic oscillator synthesis mock provider. Commercial clearance has NOT been verified. Never claim commercial clearance without verification."
+    "verified": false,
+    "license_type": "enterprise_royalty_free_unverified",
+    "notes": "Soundverse Royalty-Free generation tier requested. Commercial clearance and public distribution rights remain UNVERIFIED without manual account contract verification. Never claim commercial clearance without legal verification."
   }
 }

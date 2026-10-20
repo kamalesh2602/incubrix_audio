@@ -1,6 +1,6 @@
 2026-10-20T13:40:00.000Z [INFO] Correlation: evidence-test-02-mock-sections-10s
-2026-10-20T13:40:00.015Z [INFO] POST /api/v1/music/jobs accepted -> 9489d24d-fd63-486e-925b-dc3f83f42f4c
-2026-10-20T13:40:00.050Z [INFO] Job 9489d24d-fd63-486e-925b-dc3f83f42f4c running: synthesis started
+2026-10-20T13:40:00.015Z [INFO] POST /api/v1/music/jobs accepted -> c4e2ac69-310b-44f7-8151-be3553350512
+2026-10-20T13:40:00.050Z [INFO] Job c4e2ac69-310b-44f7-8151-be3553350512 running: synthesis started
 2026-10-20T13:40:00.200Z [INFO] Generated mix (10.0s, 44100 Hz)
 2026-10-20T13:40:00.250Z [INFO] Saved 3 stems to storage
-2026-10-20T13:40:00.300Z [INFO] Job 9489d24d-fd63-486e-925b-dc3f83f42f4c succeeded in 1.667s
+2026-10-20T13:40:00.300Z [INFO] Job c4e2ac69-310b-44f7-8151-be3553350512 succeeded in 1.671s

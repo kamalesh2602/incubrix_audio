@@ -1,5 +1,5 @@
 {
-  "idempotency_key": "idemp-test-587c6c65-3a8a-4130-a448-bbc352383e9a",
+  "idempotency_key": "idemp-test-48b19652-a57d-4c04-bf26-0626f8a0dd1e",
   "first_call": {
     "status_code": 202,
     "headers": {
@@ -8,11 +8,11 @@
       "x-correlation-id": "idemp-first"
     },
     "response": {
-      "job_id": "31df9dd5-61ca-44d0-9cf4-c37de5430f8a",
+      "job_id": "abcb894b-0bab-422a-91ec-ce09449f4255",
       "status": "queued",
-      "created_at": "2026-10-20T08:12:06.376734Z",
+      "created_at": "2026-10-20T08:38:18.533910Z",
       "message": "Job accepted and queued for processing",
-      "job_url": "/api/v1/jobs/31df9dd5-61ca-44d0-9cf4-c37de5430f8a"
+      "job_url": "/api/v1/jobs/abcb894b-0bab-422a-91ec-ce09449f4255"
     }
   },
   "second_call": {
@@ -24,11 +24,11 @@
       "x-correlation-id": "idemp-replay"
     },
     "response": {
-      "job_id": "31df9dd5-61ca-44d0-9cf4-c37de5430f8a",
+      "job_id": "abcb894b-0bab-422a-91ec-ce09449f4255",
       "status": "succeeded",
-      "created_at": "2026-10-20T08:12:06.376734Z",
+      "created_at": "2026-10-20T08:38:18.533910Z",
       "message": "Idempotent request: returning existing job without duplicating work",
-      "job_url": "/api/v1/jobs/31df9dd5-61ca-44d0-9cf4-c37de5430f8a"
+      "job_url": "/api/v1/jobs/abcb894b-0bab-422a-91ec-ce09449f4255"
     }
   }
 }

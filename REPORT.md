@@ -129,10 +129,10 @@ All measurements below are derived from actual execution on generated 16-bit PCM
 | **Audio Generation Latency (5s job)** | **`0.18 s`** | `24.5 s` (simulated polling cycle) / *Not measured (live)* |
 | **Audio Generation Latency (30s job)** | **`0.32 s`** | `45.0 s` (estimated) / *Not measured (live)* |
 | **Engine Cold-Start Time** | `0.78 s` (FastAPI lifespan) | `0.78 s` (FastAPI lifespan) |
-| **Provider Cost per 30s Track** | **`$0.00`** | **`$0.17 USD`** ($0.07 music gen + $0.10 6-stem Demucs) |
-| **Provider Cost per Minute** | **`$0.00`** | **`$0.34 USD`** (Royalty-Free Tier 1) |
+| **Provider Cost per 30s Track** | **`$0.00`** | **`~$0.17 USD`** (*Unverified documentation estimate*: $0.07 gen + $0.10 Demucs) |
+| **Provider Cost per Minute** | **`$0.00`** | **`~$0.34 USD`** (*Unverified documentation estimate*: Tier 1 Royalty-Free) |
 
-*Notice*: Live external generation latency and network cold-start against Soundverse cloud servers were **Not measured** due to absence of paid credentials.
+*Notice*: Live external generation latency, cloud cold-start, and billing ledger deductions are **Unverified / Not measured** due to the absence of an active enterprise account. Published figures reflect portal documentation estimates, not invoiced financial records.
 
 ---
 

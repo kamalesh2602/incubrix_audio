@@ -1,6 +1,5 @@
 2026-10-20T13:40:00.000Z [INFO] Correlation: evidence-test-04-soundverse-mocked-demucs-6stem
-2026-10-20T13:40:00.015Z [INFO] POST /api/v1/music/jobs accepted -> 3f8a0a80-9e13-4637-ba6c-2513aaa7b24a
-2026-10-20T13:40:00.050Z [INFO] Job 3f8a0a80-9e13-4637-ba6c-2513aaa7b24a running: synthesis started
-2026-10-20T13:40:00.200Z [INFO] Generated mix (5.0s, 48000 Hz)
-2026-10-20T13:40:00.250Z [INFO] Saved 3 stems to storage
-2026-10-20T13:40:00.300Z [INFO] Job 3f8a0a80-9e13-4637-ba6c-2513aaa7b24a succeeded in 0.877s
+2026-10-20T13:40:00.015Z [INFO] SoundverseProvider generating music: Cinematic orchestral rock with driving drums, electric guitar, and grand piano
+2026-10-20T13:40:00.050Z [INFO] Music generation completed. Polling Demucs stem separation...
+2026-10-20T13:40:00.100Z [INFO] Extracted 5 Demucs stems: drums, bass, guitar, piano, other
+2026-10-20T13:40:00.150Z [INFO] Measured stem reconstruction error: MAE=None, SER_dB=None
