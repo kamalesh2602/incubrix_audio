@@ -1,7 +1,7 @@
-
 fastapi
 uvicorn[standard]
 pydantic-settings
 httpx
 pytest
 pytest-asyncio
+miniaudio>=1.71

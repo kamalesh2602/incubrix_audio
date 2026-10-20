@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     )
 
     PROJECT_NAME: str = "IncuBrix Audio Engine"
-    VERSION: str = "0.1.0"
+    VERSION: str = "0.2.0"
     API_V1_PREFIX: str = "/api/v1"
     APP_ENV: str = "development"
 
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
     STORAGE_DIR: Path = Path("storage")
 
     # Audio synthesis and provider settings
+    # Options: "mock" (Phase 1 deterministic generator), "soundverse" (Phase 2 real AI provider)
     PROVIDER_TYPE: str = "mock"
     DEFAULT_SAMPLE_RATE: int = 44100
     DEFAULT_TARGET_LUFS: float = -14.0
@@ -35,6 +37,18 @@ class Settings(BaseSettings):
     # Duration limits (in seconds)
     MIN_DURATION_S: float = 5.0
     MAX_DURATION_S: float = 300.0
+
+    # Soundverse Enterprise API settings
+    SOUNDVERSE_API_KEY: Optional[SecretStr] = None
+    SOUNDVERSE_BASE_URL: str = "https://apiv2.soundverse.ai"
+    SOUNDVERSE_MODEL_VERSION: str = "v7"
+    SOUNDVERSE_STEM_VARIANT: str = "six-stem"
+    SOUNDVERSE_LICENSE_TIER: int = 1
+    SOUNDVERSE_POLL_INTERVAL_S: float = 2.0
+    SOUNDVERSE_POLL_TIMEOUT_S: float = 180.0
+    SOUNDVERSE_MAX_RETRIES: int = 3
+    SOUNDVERSE_RETRY_BACKOFF_S: float = 1.0
+    SOUNDVERSE_USE_COMPAT_ROUTE: bool = True
 
 
 settings = Settings()

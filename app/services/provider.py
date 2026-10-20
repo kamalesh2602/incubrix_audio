@@ -196,6 +196,8 @@ class MockMusicProvider(MusicProvider):
 
 
 def get_music_provider() -> MusicProvider:
-    """Factory returning configured music provider."""
-    # Expandable to real generative providers in future milestones
+    """Factory returning configured music provider based on PROVIDER_TYPE setting."""
+    if settings.PROVIDER_TYPE.lower() == "soundverse":
+        from app.services.soundverse_adapter import SoundverseProvider
+        return SoundverseProvider()
     return MockMusicProvider()

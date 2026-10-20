@@ -1,53 +1,36 @@
-# IncuBrix AI Background Music Engine (Phase 1)
+# IncuBrix AI Background Music Engine
 
-Welcome to Phase 1 of the **IncuBrix AI Background Music Engine**, a modular, asynchronous FastAPI service designed for generating structured background music with separated instrument stems, deterministic playback, and automated manifest creation.
+The **IncuBrix AI Background Music Engine** is a modular, asynchronous FastAPI service designed for generating high-quality background music with separated instrument stems, deterministic testing modes, real AI provider integration, automated manifest creation, and honest licensing verification.
 
 ---
 
 > [!WARNING]
-> **IMPORTANT ARCHITECTURAL NOTICE — NOT PRODUCTION READY**
-> For this Phase 1 milestone, background jobs execute in-process and state is held in an **in-memory store** (`InMemoryJobStore`).
+> **ARCHITECTURAL NOTICE — PHASE 1 & 2 DEV BASELINE**
+> For this milestone, background jobs execute asynchronously in-process, and state is maintained in an **in-memory store** (`InMemoryJobStore`).
 > **In-memory jobs do NOT survive server restarts or process crashes**, and cannot be shared across multiple horizontal worker processes.
-> This setup is intended strictly for local development, interface validation, and automated testing. Production deployment requires replacing these components with PostgreSQL, Redis, and MinIO/S3 (see [Production Transition Roadmap](#production-transition-roadmap)).
+> This setup is intended for local development, interface validation, and testing. Production deployment requires replacing these components with PostgreSQL, Redis/Celery, and MinIO/S3 (see [Production Transition Roadmap](#production-transition-roadmap)).
 
 ---
 
-## Key Features
+## Capabilities & Architecture
 
-1. **Robust Request/Response Validation**:
-   - `POST /api/v1/music/jobs` validated with Pydantic schemas.
-   - Validates duration (5 to 300 seconds), prompt presence, tempo (30–300 BPM), musical key, loopable flag, narration URL, and section timestamps.
-   - Validates supported audio formats (`wav`) and sample rates (22,050 Hz, 44,100 Hz, 48,000 Hz).
-   - Uniform JSON error responses across all validation and HTTP failure modes: `{"error": {"code": "...", "message": "...", "details": [...]}}`.
+### Phase 1: Robust Foundation & Deterministic Mock Engine
+- **Pydantic Validation**: Strict schema validation on `POST /api/v1/music/jobs` covering duration (5–300s), prompt, tempo (30–300 BPM), musical key, loopable flag, narration URL, and sequential section timestamps.
+- **Consistent JSON Errors**: Predictable error payloads across all 422, 404, 400, and 500 responses:
+  `{"error": {"code": "...", "message": "...", "details": [...]}}`.
+- **Deterministic Oscillator Synthesizer**: Generates 3 genuinely separate synthesized stems (`bass`, `chords`, `melody`) with zero external API dependencies.
+- **Sample-Accurate Duration & Mix Reconstruction**: Frames match duration down to the sample, and exported stems reconstruct the mix with 0 difference.
+- **Idempotency**: Clients can include an `Idempotency-Key` header to safely retry requests without duplicating work.
+- **Preserved Endpoints**: Preserves root `/health` (`{"status": "ok"}`) and `/ready` (`{"status": "ready"}`).
 
-2. **Provider Abstraction & Deterministic Mock Provider**:
-   - `MusicProvider` interface cleanly separates generation logic from web routing.
-   - `MockMusicProvider` generates real, deterministic, 16-bit PCM WAV audio.
-   - Generates three genuinely separate synthesized instrument parts:
-     - **Bass**: Low-register fundamental frequencies (40–120 Hz) with punchy ADSR envelope and harmonic overtones.
-     - **Chords**: Warm mid-register polyphonic triads (130–450 Hz) with soft attack and pad sustain.
-     - **Melody**: Upper-register lead melody (400–900 Hz) with musical phrasing and subtle vibrato.
-   - **Exact Sample-Accurate Duration**: Audio frames strictly equal `int(round(duration_s * sample_rate))`.
-   - **Sample-Accurate Mix Reconstruction**: Mix is constructed directly from stem samples using documented gains:
-     $$\text{mix}[t] = \text{clamp}\left(\text{round}\left(0.35 \cdot \text{bass}[t] + 0.30 \cdot \text{chords}[t] + 0.35 \cdot \text{melody}[t]\right), -32768, 32767\right)$$
-     Reconstruction from exported stem files matches the exported mix sample-for-sample with 0 difference.
-
-3. **Asynchronous In-Process Job Execution**:
-   - `POST /api/v1/music/jobs` returns `HTTP 202 Accepted` with a unique `job_id` and tracking URL.
-   - `GET /api/v1/jobs/{job_id}` returns lifecycle state (`queued`, `running`, `succeeded`, `failed`), progress indicator (0.0 to 1.0), and result URLs.
-   - Real, accessible artifact endpoints: `/api/v1/jobs/{job_id}/artifacts/{filename}` serving actual `.wav` audio and `.json` manifests.
-
-4. **Idempotency Support**:
-   - Clients can include an `Idempotency-Key` header with `POST /api/v1/music/jobs`.
-   - Repeating requests with the same key returns the existing job without duplicating synthesis work, attaching an `Idempotent-Replay: true` header.
-
-5. **Music Manifest & Honest Rights/Licensing**:
-   - Generates `music_manifest.json` for every completed job detailing request settings, seed, provider, stem filenames, gains, timings, warnings, and duration.
-   - **Licensing Integrity**: Explicitly states `commercial_clearance: false` and `status: "unverified_mock_synthesis"`. Never falsely claims commercial clearance without verified legal proof.
-
-6. **Preserved Health Checks**:
-   - `GET /health` $\rightarrow$ `{"status": "ok"}`
-   - `GET /ready` $\rightarrow$ `{"status": "ready"}`
+### Phase 2: Real AI Music Generation & Stem Separation
+- **Soundverse Enterprise API Adapter**: Configurable real AI music provider implementing the [`MusicProvider`](file:///c:/Users/ELCOT/Desktop/incubrix_audio/app/services/provider.py) interface.
+- **Instrumental Constraint**: Automatically augments prompts with tempo, key, section markers, and an explicit **"instrumental background music only, strictly no vocals, no singing, no spoken words"** instruction.
+- **Demucs Stem Separation**: Integrates 6-stem (`drums`, `bass`, `guitar`, `piano`, `other`, `vocals`), 12-stem, or 2-stem separation.
+- **Archive & Asset Inspection**: Dynamically inspects returned ZIP archives or role-tagged assets to identify and extract stems.
+- **48 kHz WAV Normalization**: Decodes MP3/WAV/FLAC formats via `miniaudio` (with optional FFmpeg integration), resamples to 48 kHz, downmixes to mono, and adjusts to exact sample count.
+- **Honest Stem Reconstruction Analysis**: Measures and logs actual Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), Peak Error, and Signal-to-Error Ratio (SER in dB) between the provider's mix and the sum of stems. Does not fabricate perfect reconstruction for neural models.
+- **Transparent Licensing & Cost**: Explicitly marks `commercial_clearance: false` and `unverified` in `music_manifest.json` until verified. Records billed costs ($0.07 music gen + $0.10 stem separation = $0.17 Royalty-Free).
 
 ---
 
@@ -56,44 +39,42 @@ Welcome to Phase 1 of the **IncuBrix AI Background Music Engine**, a modular, as
 ```
 incubrix_audio/
 ├── app/
-│   ├── __init__.py
 │   ├── main.py                  # FastAPI application entrypoint & lifespan
 │   ├── api/
-│   │   ├── __init__.py
 │   │   └── v1/
-│   │       ├── __init__.py
 │   │       ├── router.py        # Aggregated v1 API router
 │   │       └── endpoints/
-│   │           ├── __init__.py
 │   │           ├── music.py     # POST /api/v1/music/jobs
-│   │           └── jobs.py      # GET /api/v1/jobs/{job_id} & artifacts
+│   │           └── jobs.py      # GET /api/v1/jobs/{job_id} & artifact download
 │   ├── core/
-│   │   ├── __init__.py
 │   │   ├── config.py            # Pydantic Settings & environment variables
 │   │   └── errors.py            # Consistent JSON exception handlers
 │   ├── models/
-│   │   ├── __init__.py
 │   │   ├── job.py               # Job state machine & domain model
 │   │   └── schemas.py           # Pydantic request/response schemas
 │   └── services/
-│       ├── __init__.py
-│       ├── audio_synthesis.py   # Multi-stem synthesizer & mix reconstruction
-│       ├── job_runner.py        # Asynchronous job runner & scheduler
+│       ├── audio_normalizer.py  # 48kHz WAV normalization & reconstruction error metrics
+│       ├── audio_synthesis.py   # Deterministic multi-stem oscillator synthesizer
+│       ├── job_runner.py        # Asynchronous job execution coordinator
 │       ├── job_store.py         # JobStore interface & InMemoryJobStore
 │       ├── provider.py          # MusicProvider interface & MockMusicProvider
+│       ├── soundverse_adapter.py# Soundverse Enterprise API client & provider
 │       └── storage.py           # StorageService interface & LocalStorageService
 ├── tests/
-│   ├── conftest.py              # Test fixtures & temporary storage setup
-│   ├── test_audio_engine.py     # Duration, stems separation, & mix reconstruction tests
+│   ├── conftest.py              # Test fixtures & temporary storage isolation
+│   ├── test_audio_engine.py     # Exact duration, stems separation, & mix tests
 │   ├── test_health_and_ready.py # Health and readiness tests
 │   ├── test_idempotency.py      # Idempotency header test cases
 │   ├── test_job_lifecycle.py    # Submission, polling, & download tests
 │   ├── test_manifest.py         # Manifest schema & licensing verification
+│   ├── test_soundverse_adapter.py # Soundverse adapter, archive, retry, & error tests
 │   └── test_validation.py       # Pydantic validation & error response tests
 ├── .env.example                 # Environment configuration template
 ├── .gitignore                   # Git ignore rules
+├── AI_USE.md                    # AI usage and governance documentation
 ├── pytest.ini                   # Pytest configuration
 ├── requirements.txt             # Project dependencies
+├── SOURCES.md                   # Soundverse API documentation references & pricing
 └── README.md                    # Project documentation
 ```
 
@@ -106,24 +87,22 @@ incubrix_audio/
 - Virtual environment (`venv`)
 
 ### 2. Configure Environment
-Copy the example environment configuration:
+Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
-Default environment variables:
+
+Key environment configuration variables:
 | Variable | Default | Description |
 |---|---|---|
 | `APP_ENV` | `development` | Deployment environment |
-| `HOST` | `127.0.0.1` | Server host |
-| `PORT` | `8000` | Server port |
-| `PROVIDER_TYPE` | `mock` | Active synthesis engine |
+| `PROVIDER_TYPE` | `mock` | Active provider: `mock` (free local) or `soundverse` (real AI) |
 | `STORAGE_DIR` | `storage` | Local directory for output artifacts |
-| `DEFAULT_SAMPLE_RATE` | `44100` | Default audio sample rate (Hz) |
-| `DEFAULT_TARGET_LUFS` | `-14.0` | Default loudness target (LUFS) |
-| `DEFAULT_TEMPO_BPM` | `120` | Default musical tempo |
-| `DEFAULT_KEY` | `C major` | Default musical key |
-| `MIN_DURATION_S` | `5.0` | Minimum allowed audio duration (seconds) |
-| `MAX_DURATION_S` | `300.0` | Maximum allowed audio duration (seconds) |
+| `SOUNDVERSE_API_KEY` | `""` | Enterprise API key (`sksoundverse_...`) |
+| `SOUNDVERSE_BASE_URL` | `https://apiv2.soundverse.ai` | Soundverse Gateway Base URL |
+| `SOUNDVERSE_MODEL_VERSION` | `v7` | Generation model version (`v7`, `v6`, `v5`) |
+| `SOUNDVERSE_STEM_VARIANT` | `six-stem` | Stem model (`six-stem`, `12stem`, `2stem`) |
+| `SOUNDVERSE_LICENSE_TIER` | `1` | License tier (1 = Royalty-Free) |
 
 ### 3. Install Dependencies
 ```bash
@@ -134,7 +113,7 @@ pip install -r requirements.txt
 ```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
-Interactive API documentation will be available at:
+API Documentation:
 - **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
@@ -142,16 +121,7 @@ Interactive API documentation will be available at:
 
 ## API Usage Examples
 
-### 1. Health Checks
-```bash
-curl -X GET http://127.0.0.1:8000/health
-# Response: {"status": "ok"}
-
-curl -X GET http://127.0.0.1:8000/ready
-# Response: {"status": "ready"}
-```
-
-### 2. Submit a Generation Job
+### 1. Submit a Generation Job
 ```bash
 curl -X POST http://127.0.0.1:8000/api/v1/music/jobs \
   -H "Content-Type: application/json" \
@@ -167,7 +137,7 @@ curl -X POST http://127.0.0.1:8000/api/v1/music/jobs \
       {"name": "main", "start_s": 5.0, "end_s": 15.0}
     ],
     "output": {
-      "sample_rate": 44100,
+      "sample_rate": 48000,
       "target_lufs": -14.0,
       "formats": ["wav"]
     }
@@ -184,83 +154,91 @@ curl -X POST http://127.0.0.1:8000/api/v1/music/jobs \
 }
 ```
 
-### 3. Check Job Status & Retrieve Artifacts
+### 2. Check Job Status & Retrieve Artifacts
 ```bash
 curl -X GET http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
 ```
-**Response (`HTTP 200 OK` when succeeded):**
-```json
-{
-  "job_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-  "status": "succeeded",
-  "progress": 1.0,
-  "created_at": "2026-10-20T12:00:00Z",
-  "started_at": "2026-10-20T12:00:00.050Z",
-  "completed_at": "2026-10-20T12:00:01.200Z",
-  "error": null,
-  "result": {
-    "audio_url": "/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/mix.wav",
-    "stems": {
-      "bass": "/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/stem_bass.wav",
-      "chords": "/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/stem_chords.wav",
-      "melody": "/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/stem_melody.wav"
-    },
-    "manifest_url": "/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/music_manifest.json",
-    "duration_s": 15.0,
-    "sample_rate": 44100,
-    "channels": 1,
-    "format": "wav",
-    "stem_gains": {
-      "bass": 0.35,
-      "chords": 0.30,
-      "melody": 0.35
-    }
-  }
-}
-```
 
-### 4. Downloading Stems & Mix
+### 3. Download Artifacts
 ```bash
-# Download Full Mix
+# Mix WAV (48 kHz, exact duration)
 curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/mix.wav
 
-# Download Bass Stem
+# Separated Stems
 curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/stem_bass.wav
+curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/stem_drums.wav
 
-# Download Manifest
+# Manifest JSON
 curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/music_manifest.json
 ```
 
 ---
 
+## Manual Steps for Live Soundverse Generation
+
+To verify live generation with the Soundverse Enterprise API:
+
+1. **Obtain API Key**:
+   - Register at [https://platform.soundverse.ai](https://platform.soundverse.ai).
+   - Generate an enterprise API key at [https://platform.soundverse.ai/enterprise-platform/apikeys](https://platform.soundverse.ai/enterprise-platform/apikeys).
+   - Verify token balance at `GET /v1/account/balance`.
+2. **Update Environment (`.env`)**:
+   ```env
+   PROVIDER_TYPE=soundverse
+   SOUNDVERSE_API_KEY=sksoundverse_your_live_key_here
+   SOUNDVERSE_MODEL_VERSION=v7
+   SOUNDVERSE_STEM_VARIANT=six-stem
+   SOUNDVERSE_LICENSE_TIER=1
+   ```
+3. **Start Server**:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+4. **Submit Live Request**:
+   ```bash
+   curl -X POST http://127.0.0.1:8000/api/v1/music/jobs \
+     -H "Content-Type: application/json" \
+     -H "Idempotency-Key: live-test-001" \
+     -d '{"prompt": "Cinematic ambient pads with gentle percussion", "duration_s": 15.0}'
+   ```
+5. **Poll and Verify**:
+   - Poll `GET /api/v1/jobs/{job_id}` until `status == "succeeded"`.
+   - Download `music_manifest.json` and verify `stem_reconstruction_validation` (MAE, RMSE, Signal-to-Error ratio).
+   - Listen to `mix.wav` and individual stems (`stem_drums.wav`, `stem_bass.wav`, `stem_piano.wav`, etc.).
+
+---
+
 ## Testing
 
-The test suite runs with pytest and requires no API keys or external services:
+Run the full pytest suite (35 automated tests, zero API keys required, zero paid costs):
 ```bash
 pytest -v
 ```
 
-### Test Coverage Summary:
-- **`tests/test_validation.py`**: Validates missing/empty prompt, min/max duration bounds, tempo limits, section timestamps, overlapping sections, unsupported formats, and consistent JSON error formats.
-- **`tests/test_health_and_ready.py`**: Verifies `/health` and `/ready` status codes and responses.
-- **`tests/test_job_lifecycle.py`**: Verifies job submission (HTTP 202), async state transitions, progress updates, completion, 404 handling, and artifact downloads.
-- **`tests/test_idempotency.py`**: Tests duplicate submissions with the same `Idempotency-Key` and ensures existing jobs are replayed without redundant synthesis.
-- **`tests/test_audio_engine.py`**: Tests sample-accurate duration across various lengths, verifies 3 genuinely distinct non-silent stems, tests frequency separation, and verifies exact mathematical mix reconstruction ($max\_diff = 0$).
-- **`tests/test_manifest.py`**: Validates `music_manifest.json` schema, settings, gains, timings, and unverified rights/licensing disclaimer.
+### Test Suite Overview:
+- **`tests/test_soundverse_adapter.py`** (11 tests):
+  - Instrumental prompt construction & explicit no-vocals rule.
+  - Missing API key validation.
+  - End-to-end mocked music generation and 6-stem separation.
+  - Stem separation ZIP archive extraction & role parsing.
+  - Rate limiting (429 RateLimited) with exponential backoff and retry.
+  - Non-retryable provider errors (400, 402, 422).
+  - Polling timeout handling.
+  - Corrupted audio detection.
+  - Honest stem reconstruction error calculation.
+  - Configurable provider selection via `PROVIDER_TYPE`.
+- **`tests/test_audio_engine.py`** (6 tests): Sample-accurate duration, 3 distinct stems, zero-crossing frequency separation, mix reconstruction.
+- **`tests/test_job_lifecycle.py`** (3 tests): Job creation, polling, artifact retrieval, 404 handling.
+- **`tests/test_idempotency.py`** (2 tests): `Idempotency-Key` header replaying and dedup.
+- **`tests/test_manifest.py`** (1 test): Manifest schema, settings, timings, unverified licensing.
+- **`tests/test_validation.py`** (11 tests): Bounds, missing fields, overlapping sections, consistent error payloads.
+- **`tests/test_health_and_ready.py`** (2 tests): Preserved `/health` and `/ready`.
 
 ---
 
 ## Production Transition Roadmap
 
-To transition this Phase 1 foundation into an enterprise-ready production engine:
-
-1. **Persistent Job Store**:
-   - Replace `InMemoryJobStore` with a PostgreSQL implementation using SQLAlchemy or SQLModel for reliable persistence.
-2. **Distributed Queue & Worker Process**:
-   - Decouple API server from job execution using Redis and Celery / ARQ / Temporal to handle high concurrent synthesis loads.
-3. **Cloud Object Storage**:
-   - Replace `LocalStorageService` with an S3-compatible service (`boto3`) backed by AWS S3 or self-hosted MinIO with pre-signed download URLs.
-4. **Generative Neural Audio Provider**:
-   - Implement a new `MusicProvider` subclass (e.g. `AudiocraftProvider` or `MusicGenProvider`) connecting to GPU worker pools.
-5. **Dynamic Audio Post-Processing**:
-   - Integrate FFmpeg or Pyloudnorm for exact EBU R128 LUFS normalization and MP3/FLAC encoding.
+1. **Persistent Job Store**: Replace `InMemoryJobStore` with PostgreSQL (SQLAlchemy/SQLModel) to survive restarts.
+2. **Distributed Queue**: Offload generation and stem separation to Redis/Celery or Temporal.
+3. **Cloud Object Storage**: Replace `LocalStorageService` with AWS S3 or MinIO, generating pre-signed expiring download URLs.
+4. **Billing & Token Reservation**: Add pre-flight balance checks against `GET /v1/account/balance` before queuing jobs.
