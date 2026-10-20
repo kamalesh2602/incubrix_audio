@@ -45,7 +45,7 @@ incubrix_audio/
 │   │       ├── router.py        # Aggregated v1 API router
 │   │       └── endpoints/
 │   │           ├── music.py     # POST /api/v1/music/jobs
-│   │           └── jobs.py      # GET /api/v1/jobs/{job_id} & artifact download
+│   │           └── jobs.py      # GET /api/v1/jobs/{job_id}, artifacts, & ZIP download
 │   ├── core/
 │   │   ├── config.py            # Pydantic Settings & environment variables
 │   │   └── errors.py            # Consistent JSON exception handlers
@@ -68,7 +68,8 @@ incubrix_audio/
 │   ├── test_job_lifecycle.py    # Submission, polling, & download tests
 │   ├── test_manifest.py         # Manifest schema & licensing verification
 │   ├── test_soundverse_adapter.py # Soundverse adapter, archive, retry, & error tests
-│   └── test_validation.py       # Pydantic validation & error response tests
+│   ├── test_validation.py       # Pydantic validation & error response tests
+│   └── test_zip_download.py     # ZIP packaging, stems inspection, & error handling tests
 ├── .env.example                 # Environment configuration template
 ├── .gitignore                   # Git ignore rules
 ├── AI_USE.md                    # AI usage and governance documentation
@@ -171,6 +172,30 @@ curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/a
 # Manifest JSON
 curl -O http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/artifacts/music_manifest.json
 ```
+
+### 4. Download Complete Package as ZIP
+Downloads a complete ZIP bundle containing the mix, stems, and manifest:
+```bash
+curl -O -J http://127.0.0.1:8000/api/v1/jobs/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d/download
+```
+
+**ZIP Archive Contents (`incubrix_audio_{job_id}.zip`):**
+```
+incubrix_audio_{job_id}.zip
+├── mix.wav                  # Master mix normalized to requested duration & sample rate
+├── mix.mp3                  # Master mix MP3 (if exported/present)
+├── music_manifest.json      # Complete generation manifest, timings, & licensing
+└── stems/                   # Separated instrument stems (>= 3 parts)
+    ├── stem_bass.wav
+    ├── stem_chords.wav
+    └── stem_melody.wav
+```
+
+**Response Codes:**
+- `200 OK`: Returns binary `application/zip` with `Content-Disposition: attachment; filename="incubrix_audio_{job_id}.zip"`.
+- `409 Conflict`: If the job is still queued or running (`JOB_NOT_READY`), or failed (`JOB_FAILED`).
+- `404 Not Found`: If the job does not exist or artifacts are missing.
+
 
 ---
 

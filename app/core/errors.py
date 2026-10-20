@@ -42,6 +42,32 @@ class ValidationAppError(AppException):
         )
 
 
+class ConflictError(AppException):
+    def __init__(self, message: str, code: str = "CONFLICT", details: Optional[List[Dict[str, Any]]] = None):
+        super().__init__(
+            message=message,
+            code=code,
+            status_code=status.HTTP_409_CONFLICT,
+            details=details,
+        )
+
+
+class JobFailedError(AppException):
+    def __init__(
+        self,
+        message: str,
+        code: str = "JOB_FAILED",
+        status_code: int = status.HTTP_409_CONFLICT,
+        details: Optional[List[Dict[str, Any]]] = None,
+    ):
+        super().__init__(
+            message=message,
+            code=code,
+            status_code=status_code,
+            details=details,
+        )
+
+
 def format_error_response(code: str, message: str, details: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     return {
         "error": {
