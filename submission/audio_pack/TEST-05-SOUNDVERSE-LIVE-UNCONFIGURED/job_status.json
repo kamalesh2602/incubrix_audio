@@ -1,0 +1,7 @@
+{
+  "test_id": "TEST-05-SOUNDVERSE-LIVE-UNCONFIGURED",
+  "status": "unverified",
+  "reason": "SOUNDVERSE_API_KEY is not configured in environment.",
+  "provider": "soundverse_enterprise",
+  "commercial_clearance": false
+}

@@ -1,0 +1,13 @@
+{
+  "prompt": "Cinematic orchestral rock with driving drums, electric guitar, and grand piano",
+  "duration_s": 5.0,
+  "tempo_bpm": 120,
+  "key": "D minor",
+  "output": {
+    "sample_rate": 48000,
+    "target_lufs": -14.0,
+    "formats": [
+      "wav"
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+2026-10-20T13:40:00.000Z [INFO] Correlation: err-corrupt-TEST-06-HARDCASE-CORRUPTED-AUDIO
+2026-10-20T13:40:00.050Z [ERROR] Failed to decode audio content: invalid header or corrupted stream bytes
+2026-10-20T13:40:00.060Z [INFO] Job marked as FAILED with structured error.

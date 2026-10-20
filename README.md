@@ -14,6 +14,37 @@ The **IncuBrix AI Background Music Engine** is a modular, asynchronous FastAPI s
 
 ## Capabilities & Architecture
 
+```mermaid
+graph TD
+    Client["Client / Batch Runner"] -->|POST /api/v1/music/jobs| Router["API Router (FastAPI)"]
+    Client -->|GET /api/v1/jobs/{id}/download| Router
+    Client -->|POST /api/v1/audio/upload| Router
+    
+    subgraph Middleware & Core
+        Router --> Corr["CorrelationIdMiddleware (X-Correlation-ID)"]
+        Corr --> JSONLog["JSONLogFormatter (Structured Logging)"]
+        Router --> ErrHand["Consistent JSON Error Handlers (400/404/409/422)"]
+    end
+    
+    subgraph Job Execution Engine
+        Router --> JobStore["InMemoryJobStore (Idempotency & State)"]
+        Router --> Runner["JobRunner (asyncio Background Task)"]
+        Runner --> ProviderFactory["Provider Factory (get_music_provider)"]
+        
+        ProviderFactory --> MockProv["MockMusicProvider (Deterministic DSP)"]
+        ProviderFactory --> SVProv["SoundverseProvider (AI API + Demucs)"]
+        
+        SVProv --> SVClient["SoundverseClient (Retry Backoff / Polling)"]
+        SVProv --> AudioNorm["AudioNormalizer (48kHz WAV / SER Metric)"]
+    end
+    
+    subgraph Storage Subsystem
+        Runner --> StorageFactory["get_storage_service()"]
+        StorageFactory --> LocalStorage["LocalStorageService (/storage)"]
+        StorageFactory --> S3Storage["S3StorageService (MinIO / AWS S3)"]
+    end
+```
+
 ### Phase 1: Robust Foundation & Deterministic Mock Engine
 - **Pydantic Validation**: Strict schema validation on `POST /api/v1/music/jobs` covering duration (5–300s), prompt, tempo (30–300 BPM), musical key, loopable flag, narration URL, and sequential section timestamps.
 - **Consistent JSON Errors**: Predictable error payloads across all 422, 404, 400, and 500 responses:

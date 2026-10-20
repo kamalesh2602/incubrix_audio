@@ -143,3 +143,15 @@ Soundverse returns specific error class names in the `error` body field:
 
 - Output tracks generated under Tier 1 (`LICENSE_ROYALTY_FREE`) are designated as royalty-free under Soundverse terms.
 - **Verification Rule**: Commercial clearance is marked as `commercial_clearance: false` in manifests until enterprise licensing contracts and account terms are legally verified. Never claim commercial clearance without verification.
+
+---
+
+## 7. External Libraries & Core Specifications
+
+- **FastAPI** (`v0.115+`): High-performance ASGI web framework with native OpenAPI 3.1.0 generation.
+- **Pydantic & Pydantic-Settings** (`v2.x`): Data validation and typed environment configuration.
+- **miniaudio** (`v1.71+`): Portable, multi-format audio decoding (WAV, MP3, FLAC) and resampling.
+- **boto3** (`v1.34+`): AWS S3 / MinIO compatible cloud object storage client.
+- **HTTPX** (`v0.28+`): Next-generation HTTP client supporting async transports and test execution.
+- **PyYAML** (`v6.0+`): YAML parsing and serialization for OpenAPI 3.1 specifications.
+- **OpenAPI 3.1.0 Specification**: Industry-standard RESTful API description standard.

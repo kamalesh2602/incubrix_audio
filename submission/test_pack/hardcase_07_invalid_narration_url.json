@@ -1,0 +1,21 @@
+{
+  "request": {
+    "prompt": "Voiceover",
+    "duration_s": 5.0,
+    "narration_url": "ftp://bad-url.com/narration.mp3"
+  },
+  "status_code": 422,
+  "response": {
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed. Please check the provided fields.",
+      "details": [
+        {
+          "field": "narration_url",
+          "message": "Value error, narration_url must be a valid HTTP or HTTPS URL",
+          "type": "value_error"
+        }
+      ]
+    }
+  }
+}

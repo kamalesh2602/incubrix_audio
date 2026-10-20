@@ -1,0 +1,6 @@
+{
+  "test_id": "TEST-06-HARDCASE-CORRUPTED-AUDIO",
+  "status": "failed",
+  "error": "Failed to decode audio content: invalid header or corrupted stream bytes",
+  "handled_gracefully": true
+}

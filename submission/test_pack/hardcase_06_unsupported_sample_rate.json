@@ -1,0 +1,23 @@
+{
+  "request": {
+    "prompt": "Hi-Res",
+    "duration_s": 5.0,
+    "output": {
+      "sample_rate": 96000
+    }
+  },
+  "status_code": 422,
+  "response": {
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed. Please check the provided fields.",
+      "details": [
+        {
+          "field": "output.sample_rate",
+          "message": "Value error, Unsupported sample rate: 96000. Supported sample rates are: [22050, 44100, 48000]",
+          "type": "value_error"
+        }
+      ]
+    }
+  }
+}

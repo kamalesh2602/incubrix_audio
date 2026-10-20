@@ -1,0 +1,14 @@
+{
+  "prompt": "Warm ambient soundscape with gentle synth pads and subtle acoustic melody",
+  "duration_s": 5.0,
+  "tempo_bpm": 85,
+  "key": "C major",
+  "seed": 1001,
+  "output": {
+    "sample_rate": 44100,
+    "target_lufs": -14.0,
+    "formats": [
+      "wav"
+    ]
+  }
+}

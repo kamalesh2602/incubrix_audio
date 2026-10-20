@@ -1,0 +1,11 @@
+{
+  "job_id": "0e6244da-f6c3-47a8-97e5-2e4feeb6d48f",
+  "status_code": 409,
+  "response": {
+    "error": {
+      "code": "JOB_FAILED",
+      "message": "Job '0e6244da-f6c3-47a8-97e5-2e4feeb6d48f' failed: Synthesis oscillator crashed",
+      "details": []
+    }
+  }
+}

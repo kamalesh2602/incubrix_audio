@@ -1,0 +1,21 @@
+{
+  "request": {
+    "prompt": "Fast",
+    "duration_s": 5.0,
+    "tempo_bpm": 500
+  },
+  "status_code": 422,
+  "response": {
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed. Please check the provided fields.",
+      "details": [
+        {
+          "field": "tempo_bpm",
+          "message": "Input should be less than or equal to 300",
+          "type": "less_than_equal"
+        }
+      ]
+    }
+  }
+}

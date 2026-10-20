@@ -1,0 +1,32 @@
+{
+  "request": {
+    "prompt": "Overlap",
+    "duration_s": 10.0,
+    "sections": [
+      {
+        "name": "Part 1",
+        "start_s": 0.0,
+        "end_s": 5.0
+      },
+      {
+        "name": "Part 2",
+        "start_s": 4.0,
+        "end_s": 8.0
+      }
+    ]
+  },
+  "status_code": 422,
+  "response": {
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed. Please check the provided fields.",
+      "details": [
+        {
+          "field": "body",
+          "message": "Value error, Section #2 'Part 2' start_s (4.0) overlaps with preceding section ending at 5.0",
+          "type": "value_error"
+        }
+      ]
+    }
+  }
+}

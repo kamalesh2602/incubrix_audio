@@ -1,0 +1,15 @@
+{
+  "prompt": "Rhythmic lo-fi chill beat with smooth bassline and gentle electric piano chords",
+  "duration_s": 7.5,
+  "tempo_bpm": 95,
+  "key": "A minor",
+  "loopable": true,
+  "seed": 3003,
+  "output": {
+    "sample_rate": 48000,
+    "target_lufs": -14.0,
+    "formats": [
+      "wav"
+    ]
+  }
+}

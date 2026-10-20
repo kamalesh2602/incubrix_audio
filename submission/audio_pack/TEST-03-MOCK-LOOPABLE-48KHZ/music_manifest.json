@@ -1,0 +1,70 @@
+{
+  "manifest_version": "1.0.0",
+  "job_id": "10cd871f-0074-4ea8-b6aa-58c291c364e7",
+  "request": {
+    "prompt": "Rhythmic lo-fi chill beat with smooth bassline and gentle electric piano chords",
+    "duration_s": 7.5,
+    "sections": null,
+    "tempo_bpm": 95,
+    "key": "A minor",
+    "loopable": true,
+    "narration_url": null,
+    "seed": 3003,
+    "output": {
+      "sample_rate": 48000,
+      "target_lufs": -14.0,
+      "formats": [
+        "wav"
+      ]
+    }
+  },
+  "seed": 3003,
+  "provider": {
+    "name": "MockMusicProvider",
+    "version": "1.0.0",
+    "type": "mock",
+    "description": "Deterministic multi-stem algorithmic oscillator mock provider"
+  },
+  "settings": {
+    "sample_rate": 48000,
+    "channels": 1,
+    "bit_depth": 16,
+    "format": "pcm_s16le",
+    "target_lufs": -14.0
+  },
+  "stem_filenames": {
+    "bass": "stem_bass.wav",
+    "chords": "stem_chords.wav",
+    "melody": "stem_melody.wav"
+  },
+  "mix_filename": "mix.wav",
+  "stem_gains": {
+    "bass": 0.35,
+    "chords": 0.3,
+    "melody": 0.35
+  },
+  "reconstruction_formula": "mix[t] = clamp(round(gain_bass * stem_bass[t] + gain_chords * stem_chords[t] + gain_melody * stem_melody[t]), -32768, 32767)",
+  "duration": {
+    "requested_s": 7.5,
+    "actual_s": 7.5,
+    "total_samples": 360000
+  },
+  "sample_rate": 48000,
+  "timings": {
+    "created_at": "2026-10-20T08:12:02.515053+00:00",
+    "completed_at": "2026-10-20T08:12:03.833443+00:00",
+    "generation_time_s": 1.3184,
+    "section_timings": []
+  },
+  "warnings": [
+    "Generated using local synthetic mock provider for testing and development.",
+    "In-memory job storage: job metadata and audio stems will not persist across server restarts.",
+    "Audio is algorithmically generated using sinusoidal/harmonic synthesis; not produced by deep generative AI models."
+  ],
+  "rights_and_licensing": {
+    "status": "unverified_mock_synthesis",
+    "commercial_clearance": false,
+    "license_type": "development_and_testing_only",
+    "notes": "Generated with local algorithmic oscillator synthesis mock provider. Commercial clearance has NOT been verified. Never claim commercial clearance without verification."
+  }
+}

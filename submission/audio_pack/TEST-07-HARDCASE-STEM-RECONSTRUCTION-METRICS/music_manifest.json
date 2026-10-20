@@ -1,0 +1,70 @@
+{
+  "manifest_version": "1.0.0",
+  "job_id": "d8709052-64da-41b0-953c-0b5a812b8eeb",
+  "request": {
+    "prompt": "Neural stem separation reconstruction audit",
+    "duration_s": 5.0,
+    "sections": null,
+    "tempo_bpm": 100,
+    "key": null,
+    "loopable": false,
+    "narration_url": null,
+    "seed": null,
+    "output": {
+      "sample_rate": 44100,
+      "target_lufs": -14.0,
+      "formats": [
+        "wav"
+      ]
+    }
+  },
+  "seed": 896553905,
+  "provider": {
+    "name": "MockMusicProvider",
+    "version": "1.0.0",
+    "type": "mock",
+    "description": "Deterministic multi-stem algorithmic oscillator mock provider"
+  },
+  "settings": {
+    "sample_rate": 44100,
+    "channels": 1,
+    "bit_depth": 16,
+    "format": "pcm_s16le",
+    "target_lufs": -14.0
+  },
+  "stem_filenames": {
+    "bass": "stem_bass.wav",
+    "chords": "stem_chords.wav",
+    "melody": "stem_melody.wav"
+  },
+  "mix_filename": "mix.wav",
+  "stem_gains": {
+    "bass": 0.35,
+    "chords": 0.3,
+    "melody": 0.35
+  },
+  "reconstruction_formula": "mix[t] = clamp(round(gain_bass * stem_bass[t] + gain_chords * stem_chords[t] + gain_melody * stem_melody[t]), -32768, 32767)",
+  "duration": {
+    "requested_s": 5.0,
+    "actual_s": 5.0,
+    "total_samples": 220500
+  },
+  "sample_rate": 44100,
+  "timings": {
+    "created_at": "2026-10-20T08:12:05.331608+00:00",
+    "completed_at": "2026-10-20T08:12:06.126926+00:00",
+    "generation_time_s": 0.7953,
+    "section_timings": []
+  },
+  "warnings": [
+    "Generated using local synthetic mock provider for testing and development.",
+    "In-memory job storage: job metadata and audio stems will not persist across server restarts.",
+    "Audio is algorithmically generated using sinusoidal/harmonic synthesis; not produced by deep generative AI models."
+  ],
+  "rights_and_licensing": {
+    "status": "unverified_mock_synthesis",
+    "commercial_clearance": false,
+    "license_type": "development_and_testing_only",
+    "notes": "Generated with local algorithmic oscillator synthesis mock provider. Commercial clearance has NOT been verified. Never claim commercial clearance without verification."
+  }
+}

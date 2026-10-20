@@ -1,0 +1,27 @@
+{
+  "job_id": "d8709052-64da-41b0-953c-0b5a812b8eeb",
+  "status": "succeeded",
+  "progress": 1.0,
+  "created_at": "2026-10-20T08:12:05.331258Z",
+  "started_at": "2026-10-20T08:12:05.331530Z",
+  "completed_at": "2026-10-20T08:12:06.136232Z",
+  "error": null,
+  "result": {
+    "audio_url": "/api/v1/jobs/d8709052-64da-41b0-953c-0b5a812b8eeb/artifacts/mix.wav",
+    "stems": {
+      "bass": "/api/v1/jobs/d8709052-64da-41b0-953c-0b5a812b8eeb/artifacts/stem_bass.wav",
+      "chords": "/api/v1/jobs/d8709052-64da-41b0-953c-0b5a812b8eeb/artifacts/stem_chords.wav",
+      "melody": "/api/v1/jobs/d8709052-64da-41b0-953c-0b5a812b8eeb/artifacts/stem_melody.wav"
+    },
+    "manifest_url": "/api/v1/jobs/d8709052-64da-41b0-953c-0b5a812b8eeb/artifacts/music_manifest.json",
+    "duration_s": 5.0,
+    "sample_rate": 44100,
+    "channels": 1,
+    "format": "wav",
+    "stem_gains": {
+      "bass": 0.35,
+      "chords": 0.3,
+      "melody": 0.35
+    }
+  }
+}

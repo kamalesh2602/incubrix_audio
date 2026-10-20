@@ -1,0 +1,3 @@
+2026-10-20T13:40:00.000Z [INFO] Correlation: live-probe-TEST-05-SOUNDVERSE-LIVE-UNCONFIGURED
+2026-10-20T13:40:00.010Z [WARNING] SOUNDVERSE_API_KEY is empty. Live provider generation cannot be executed without valid credentials.
+2026-10-20T13:40:00.020Z [INFO] State: UNVERIFIED. Zero paid costs incurred.

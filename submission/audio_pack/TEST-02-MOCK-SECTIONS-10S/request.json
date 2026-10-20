@@ -1,0 +1,31 @@
+{
+  "prompt": "Acoustic folk ballad with dynamic intro, verse, and chorus sections",
+  "duration_s": 10.0,
+  "tempo_bpm": 110,
+  "key": "G major",
+  "seed": 2002,
+  "sections": [
+    {
+      "name": "Intro",
+      "start_s": 0.0,
+      "end_s": 3.0
+    },
+    {
+      "name": "Verse",
+      "start_s": 3.0,
+      "end_s": 7.0
+    },
+    {
+      "name": "Chorus",
+      "start_s": 7.0,
+      "end_s": 10.0
+    }
+  ],
+  "output": {
+    "sample_rate": 44100,
+    "target_lufs": -14.0,
+    "formats": [
+      "wav"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "job_id": "732c4a5f-24d7-427a-aba0-7218519e6756",
+  "status_code": 409,
+  "response": {
+    "error": {
+      "code": "JOB_NOT_READY",
+      "message": "Job '732c4a5f-24d7-427a-aba0-7218519e6756' is still in progress (status: queued). ZIP archive is only available once the job has succeeded.",
+      "details": []
+    }
+  }
+}

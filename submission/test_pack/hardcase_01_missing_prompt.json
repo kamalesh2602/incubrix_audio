@@ -1,0 +1,19 @@
+{
+  "request": {
+    "duration_s": 10.0
+  },
+  "status_code": 422,
+  "response": {
+    "error": {
+      "code": "VALIDATION_ERROR",
+      "message": "Request validation failed. Please check the provided fields.",
+      "details": [
+        {
+          "field": "prompt",
+          "message": "Field required",
+          "type": "missing"
+        }
+      ]
+    }
+  }
+}
