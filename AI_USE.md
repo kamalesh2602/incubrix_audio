@@ -1,37 +1,22 @@
-# AI Usage & Implementation Governance
+# AI Usage Disclosure — IncuBrix Audio Engine
 
-This document records the principles, scope, and safeguards applied when utilizing AI in the design, development, and testing of the **IncuBrix AI Background Music Engine** (Phase 1 and Phase 2).
+## 1. AI-Assisted Development Tools
 
----
+### ChatGPT
+Used for architecture planning, technical research, implementation prompts, debugging guidance, test planning, code explanations, and documentation support.
 
-## 1. Scope of AI Involvement
+### Google Antigravity
+Used as an AI-assisted development environment to implement code changes, modify project files, and run tests based on the project's implementation requirements.
 
-An advanced AI coding assistant (Google DeepMind Antigravity) was utilized to pair-program and implement:
-1. **Architecture & API Design**:
-   - Designing clean Pydantic request/response schemas for `/api/v1/music/jobs` with cross-field validators.
-   - Crafting provider abstractions (`MusicProvider`) and storage abstractions (`JobStore`, `StorageService`).
-2. **Provider Documentation Inspection**:
-   - Live inspection and parsing of the official Soundverse Enterprise API documentation (`https://platform.soundverse.ai/docs`).
-   - Extracting exact route signatures, status shapes, error codes, and Demucs stem-separation variants directly from source documents without guessing.
-3. **Audio Engineering & DSP**:
-   - Developing sample-rate converters (resampling to 48 kHz WAV) and sample-accurate duration trimmers/padders.
-   - Implementing stem separation archive inspection (.zip extraction) and stem role parsing.
-   - Implementing mathematical reconstruction discrepancy analysis (MAE, RMSE, Max Error, Signal-to-Error Ratio in dB).
-4. **Automated Testing Suite**:
-   - Writing comprehensive, mock-based pytest suites (35 unit and integration tests) providing complete test coverage without making paid outbound API calls.
+## 2. Application AI Services
 
----
+### Soundverse Enterprise API
+Integrated as the intended external AI music-generation and stem-separation provider. Live integration must be verified using actual API credentials and generated outputs before claiming successful end-to-end operation.
 
-## 2. Ethical Safeguards & Truthful Reporting
+## 3. Verification and Responsibility
 
-1. **No Fabricated Verification**:
-   - Synthetic mock generation (Phase 1) is clearly distinguished from real AI provider integration (Phase 2).
-   - In live AI generation with stem separation, reconstruction error is measured and reported honestly; neural stem separation artifacts are never hidden or claimed to be mathematically lossless.
-2. **Strict Rights & Commercial Clearance Policy**:
-   - Generated manifests explicitly designate `commercial_clearance: false` and note that commercial clearance has not been legally verified.
-   - Falsely claiming commercial clearance without contractual proof is strictly prohibited.
-3. **Cost Protection**:
-   - The engine defaults to `PROVIDER_TYPE=mock` out-of-the-box.
-   - Automated tests run against local mock transports and never trigger billed provider calls.
-4. **Credential Security**:
-   - Sensitive credentials (`SOUNDVERSE_API_KEY`) are protected using Pydantic's `SecretStr` to prevent exposure in logs, traces, or string conversions.
+AI-generated code and suggestions are subject to human review and automated testing. Test results are reported from actual test executions. Commercial licensing, audio quality, and provider behavior must be independently verified before production use.
+
+## 4. Limitations
+
+AI assistance does not guarantee correctness, musical quality, complete stem separation, or commercial clearance. Known limitations and failed tests are documented honestly in the project report and test pack.
