@@ -1,0 +1,53 @@
+[
+  {
+    "id": "batch-job-001",
+    "prompt": "Cinematic ambient soundscape with warm synth pads, gentle piano melodies, and subtle organic percussion",
+    "duration_s": 5.0,
+    "tempo_bpm": 80,
+    "key": "D minor",
+    "loopable": false,
+    "sections": [
+      {
+        "name": "Intro",
+        "start_s": 0.0,
+        "end_s": 2.5
+      },
+      {
+        "name": "Theme",
+        "start_s": 2.5,
+        "end_s": 5.0
+      }
+    ],
+    "output": {
+      "sample_rate": 44100,
+      "target_lufs": -14.0,
+      "formats": ["wav"]
+    }
+  },
+  {
+    "id": "batch-job-002",
+    "prompt": "Upbeat acoustic folk melody with light percussion and bright fingerpicked guitar",
+    "duration_s": 5.0,
+    "tempo_bpm": 115,
+    "key": "G major",
+    "loopable": true,
+    "output": {
+      "sample_rate": 48000,
+      "target_lufs": -14.0,
+      "formats": ["wav"]
+    }
+  },
+  {
+    "id": "batch-job-003",
+    "prompt": "Deep synthwave groove with punchy bassline, analog chord stabs, and retro arpeggio",
+    "duration_s": 5.0,
+    "tempo_bpm": 105,
+    "key": "A minor",
+    "loopable": false,
+    "output": {
+      "sample_rate": 44100,
+      "target_lufs": -14.0,
+      "formats": ["wav"]
+    }
+  }
+]

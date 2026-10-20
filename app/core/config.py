@@ -18,9 +18,18 @@ class Settings(BaseSettings):
 
     HOST: str = "127.0.0.1"
     PORT: int = 8000
+    LOG_LEVEL: str = "INFO"
 
-    # Local storage for artifacts (audio stems, mix, manifest)
+    # Storage settings
+    # Options: "local" (default filesystem), "s3" (AWS S3 or MinIO S3-compatible storage)
+    STORAGE_BACKEND: str = "local"
     STORAGE_DIR: Path = Path("storage")
+    S3_ENDPOINT_URL: Optional[str] = None
+    S3_BUCKET_NAME: str = "incubrix-audio"
+    S3_ACCESS_KEY_ID: Optional[SecretStr] = None
+    S3_SECRET_ACCESS_KEY: Optional[SecretStr] = None
+    S3_REGION: str = "us-east-1"
+    S3_SECURE: bool = False
 
     # Audio synthesis and provider settings
     # Options: "mock" (Phase 1 deterministic generator), "soundverse" (Phase 2 real AI provider)

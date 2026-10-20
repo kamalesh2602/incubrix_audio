@@ -111,12 +111,26 @@ pip install -r requirements.txt
 ```
 
 ### 4. Start the Application
+Local Python:
 ```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
-API Documentation:
-- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+### 5. One-Command Docker Compose Quickstart
+Start the full stack (API + MinIO S3 object storage):
+```bash
+docker compose up -d
+```
+Run containerized tests with one command:
+```bash
+docker compose run --rm test
+```
+
+### 6. OpenAPI 3.1 Specification
+- Static OpenAPI 3.1 spec: [`openapi.yaml`](openapi.yaml)
+- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+- OpenAPI JSON: [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
 
 ---
 
@@ -196,6 +210,19 @@ incubrix_audio_{job_id}.zip
 - `409 Conflict`: If the job is still queued or running (`JOB_NOT_READY`), or failed (`JOB_FAILED`).
 - `404 Not Found`: If the job does not exist or artifacts are missing.
 
+### 5. Upload Audio File (Narration / Reference Input)
+Uploads an audio file (.wav, .mp3, .flac) to storage for use as a `narration_url`:
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/audio/upload \
+  -F "file=@voiceover.wav;type=audio/wav"
+```
+
+### 6. Execute Batch Test Scenarios
+Runs the batch runner against test scenarios defined in `scripts/batch_inputs.json`, polling all jobs and downloading mix audio, stems, manifests, and ZIP packages:
+```bash
+python scripts/batch_runner.py --api-url http://127.0.0.1:8000 --output-dir batch_output
+```
+Outputs and full audit report are saved to `batch_output/batch_summary.json`.
 
 ---
 
@@ -235,13 +262,21 @@ To verify live generation with the Soundverse Enterprise API:
 
 ## Testing
 
-Run the full pytest suite (35 automated tests, zero API keys required, zero paid costs):
+Run the full pytest suite (48 automated tests, zero API keys required, zero paid costs):
 ```bash
 pytest -v
 ```
 
 ### Test Suite Overview:
-- **`tests/test_soundverse_adapter.py`** (11 tests):
+- **`tests/test_audit_standards.py`** (5 tests):
+  - OpenAPI 3.1 schema completeness and routing matches.
+  - Correlation ID middleware (`X-Correlation-ID` extraction & generation).
+  - Structured JSON logging formatter.
+  - Audio file upload endpoint (`POST /api/v1/audio/upload`) and 422 validation.
+  - S3StorageService interface & local caching.
+- **`tests/test_batch_runner.py`** (1 test): Full automated multi-scenario batch execution, progress polling, artifact download, and summary reporting.
+- **`tests/test_zip_download.py`** (7 tests): ZIP packaging, directory structure (`stems/`), `mix.mp3` inclusion, 409 queued/running errors, 409 failed errors, 404 nonexistent jobs, and missing artifacts.
+- **`tests/test_soundverse_adapter.py`** (10 tests):
   - Instrumental prompt construction & explicit no-vocals rule.
   - Missing API key validation.
   - End-to-end mocked music generation and 6-stem separation.
@@ -252,12 +287,12 @@ pytest -v
   - Corrupted audio detection.
   - Honest stem reconstruction error calculation.
   - Configurable provider selection via `PROVIDER_TYPE`.
-- **`tests/test_audio_engine.py`** (6 tests): Sample-accurate duration, 3 distinct stems, zero-crossing frequency separation, mix reconstruction.
+- **`tests/test_audio_engine.py`** (6 tests): Sample-accurate duration, 3 distinct stems, frequency separation, mix reconstruction.
 - **`tests/test_job_lifecycle.py`** (3 tests): Job creation, polling, artifact retrieval, 404 handling.
 - **`tests/test_idempotency.py`** (2 tests): `Idempotency-Key` header replaying and dedup.
 - **`tests/test_manifest.py`** (1 test): Manifest schema, settings, timings, unverified licensing.
 - **`tests/test_validation.py`** (11 tests): Bounds, missing fields, overlapping sections, consistent error payloads.
-- **`tests/test_health_and_ready.py`** (2 tests): Preserved `/health` and `/ready`.
+- **`tests/test_health_and_ready.py`** (2 tests): `/health` and `/ready` endpoints.
 
 ---
 

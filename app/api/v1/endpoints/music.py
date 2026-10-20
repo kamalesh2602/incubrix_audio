@@ -1,12 +1,15 @@
+from pathlib import Path
 import uuid
 from typing import Optional
-from fastapi import APIRouter, Header, Response, status
+from fastapi import APIRouter, File, Header, Response, UploadFile, status
 
 from app.core.config import settings
+from app.core.errors import ValidationAppError
 from app.models.job import Job, JobStatus
-from app.models.schemas import MusicJobRequest, MusicJobResponse
+from app.models.schemas import AudioUploadResponse, MusicJobRequest, MusicJobResponse
 from app.services.job_runner import schedule_job
 from app.services.job_store import job_store
+from app.services.storage import storage_service
 
 router = APIRouter()
 
@@ -68,4 +71,51 @@ async def create_music_job(
         created_at=job.created_at,
         message="Job accepted and queued for processing",
         job_url=f"{settings.API_V1_PREFIX}/jobs/{job_id}",
+    )
+
+
+@router.post(
+    "/audio/upload",
+    response_model=AudioUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload audio file (narration or reference)",
+    description="Uploads an audio file (.wav, .mp3, .flac, .ogg) for use in music generation requests.",
+)
+@router.post(
+    "/music/upload",
+    response_model=AudioUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    include_in_schema=False,
+)
+async def upload_audio_file(
+    file: UploadFile = File(..., description="Audio file to upload (.wav, .mp3, .flac, .ogg)"),
+) -> AudioUploadResponse:
+    # 1. Validate file extension and MIME type
+    allowed_exts = {".wav", ".mp3", ".flac", ".ogg", ".aac", ".m4a"}
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in allowed_exts:
+        raise ValidationAppError(
+            f"Unsupported audio format '{ext}'. Allowed extensions: {sorted(list(allowed_exts))}"
+        )
+
+    # 2. Read content & validate size (max 50 MB)
+    content = await file.read()
+    if not content:
+        raise ValidationAppError("Uploaded audio file is empty.")
+    if len(content) > 50 * 1024 * 1024:
+        raise ValidationAppError("Audio file exceeds maximum allowed size of 50 MB.")
+
+    upload_id = str(uuid.uuid4())
+    safe_name = f"{upload_id}_{file.filename}"
+    content_type = file.content_type or "audio/wav"
+
+    url = await storage_service.save_file("uploads", safe_name, content, content_type)
+
+    return AudioUploadResponse(
+        upload_id=upload_id,
+        filename=file.filename or safe_name,
+        content_type=content_type,
+        size_bytes=len(content),
+        url=url,
+        message="Audio file uploaded successfully",
     )

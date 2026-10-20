@@ -154,3 +154,12 @@ class JobStatusResponse(BaseModel):
     completed_at: Optional[datetime] = None
     error: Optional[str] = None
     result: Optional[JobResultSchema] = None
+
+
+class AudioUploadResponse(BaseModel):
+    upload_id: str
+    filename: str
+    content_type: str
+    size_bytes: int
+    url: str
+    message: str = "Audio file uploaded successfully"
