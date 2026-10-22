@@ -16,17 +16,17 @@ The **IncuBrix AI Background Music Engine** is a modular, asynchronous FastAPI s
 
 ```mermaid
 graph TD
-    Client["Client / Batch Runner"] -->|POST /api/v1/music/jobs| Router["API Router (FastAPI)"]
-    Client -->|GET /api/v1/jobs/{id}/download| Router
-    Client -->|POST /api/v1/audio/upload| Router
+    Client["Client / Batch Runner"] -->|"POST /api/v1/music/jobs"| Router["API Router (FastAPI)"]
+    Client -->|"GET /api/v1/jobs/{id}/download"| Router
+    Client -->|"POST /api/v1/audio/upload"| Router
     
-    subgraph Middleware & Core
+    subgraph Middleware_Core ["Middleware & Core"]
         Router --> Corr["CorrelationIdMiddleware (X-Correlation-ID)"]
         Corr --> JSONLog["JSONLogFormatter (Structured Logging)"]
         Router --> ErrHand["Consistent JSON Error Handlers (400/404/409/422)"]
     end
     
-    subgraph Job Execution Engine
+    subgraph Job_Engine ["Job Execution Engine"]
         Router --> JobStore["InMemoryJobStore (Idempotency & State)"]
         Router --> Runner["JobRunner (asyncio Background Task)"]
         Runner --> ProviderFactory["Provider Factory (get_music_provider)"]
@@ -38,7 +38,7 @@ graph TD
         SVProv --> AudioNorm["AudioNormalizer (48kHz WAV / SER Metric)"]
     end
     
-    subgraph Storage Subsystem
+    subgraph Storage_Subsystem ["Storage Subsystem"]
         Runner --> StorageFactory["get_storage_service()"]
         StorageFactory --> LocalStorage["LocalStorageService (/storage)"]
         StorageFactory --> S3Storage["S3StorageService (MinIO / AWS S3)"]
@@ -55,7 +55,7 @@ graph TD
 - **Preserved Endpoints**: Preserves root `/health` (`{"status": "ok"}`) and `/ready` (`{"status": "ready"}`).
 
 ### Phase 2: Real AI Music Generation & Stem Separation
-- **Soundverse Enterprise API Adapter**: Configurable real AI music provider implementing the [`MusicProvider`](file:///c:/Users/ELCOT/Desktop/incubrix_audio/app/services/provider.py) interface.
+- **Soundverse Enterprise API Adapter**: Configurable real AI music provider implementing the [`MusicProvider`](app/services/provider.py) interface.
 - **Instrumental Constraint**: Automatically augments prompts with tempo, key, section markers, and an explicit **"instrumental background music only, strictly no vocals, no singing, no spoken words"** instruction.
 - **Demucs Stem Separation**: Integrates 6-stem (`drums`, `bass`, `guitar`, `piano`, `other`, `vocals`), 12-stem, or 2-stem separation.
 - **Archive & Asset Inspection**: Dynamically inspects returned ZIP archives or role-tagged assets to identify and extract stems.

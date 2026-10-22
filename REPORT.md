@@ -26,17 +26,17 @@ The engine is built on **FastAPI (ASGI)**, decoupled into domain schemas, backgr
 
 ```mermaid
 graph TD
-    Client["Client / Batch Runner"] -->|POST /api/v1/music/jobs| Router["API Router (FastAPI)"]
-    Client -->|GET /api/v1/jobs/{id}/download| Router
-    Client -->|POST /api/v1/audio/upload| Router
+    Client["Client / Batch Runner"] -->|"POST /api/v1/music/jobs"| Router["API Router (FastAPI)"]
+    Client -->|"GET /api/v1/jobs/{id}/download"| Router
+    Client -->|"POST /api/v1/audio/upload"| Router
     
-    subgraph Middleware & Core
+    subgraph Middleware_Core ["Middleware & Core"]
         Router --> Corr["CorrelationIdMiddleware (X-Correlation-ID)"]
         Corr --> JSONLog["JSONLogFormatter (Structured Logging)"]
         Router --> ErrHand["Consistent JSON Error Handlers (400/404/409/422)"]
     end
     
-    subgraph Job Execution Engine
+    subgraph Job_Engine ["Job Execution Engine"]
         Router --> JobStore["InMemoryJobStore (Idempotency & State)"]
         Router --> Runner["JobRunner (asyncio Background Task)"]
         Runner --> ProviderFactory["Provider Factory (get_music_provider)"]
@@ -48,7 +48,7 @@ graph TD
         SVProv --> AudioNorm["AudioNormalizer (48kHz WAV / SER Metric)"]
     end
     
-    subgraph Storage Subsystem
+    subgraph Storage_Subsystem ["Storage Subsystem"]
         Runner --> StorageFactory["get_storage_service()"]
         StorageFactory --> LocalStorage["LocalStorageService (/storage)"]
         StorageFactory --> S3Storage["S3StorageService (MinIO / AWS S3)"]
